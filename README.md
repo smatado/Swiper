@@ -30,18 +30,22 @@ struct ContentView: View {
     @State var cards: [Card] = // your card data
     
     var body: some View {
-        CardDeck(data: $cards) { card, action in
-            // your card view
-        } onSwipe: { card, action in
-            // handle swipe action
+        Swiper(data: $cards) { item, action in // <--- Pass a binding to your data here
+            CardView(cardModel: item, userAction: action) // <--- Your custom View here, pass the action for customization if needed
+        } onSwipe: { item, action in
+            didSwipe(item: item, action: action) // <--- Handle Swipe action here
         }
+        .rotationRatio(50.0) // <--- Rotation ratio in degrees per points of the horizontal translation
+        .swipeThreshold(50.0) // <--- The minimum horizontal translation threshold required to register a swipe action
+        .animationDuration(0.15) // <--- The duration of the swipe animation when user releases the card
+        .padding([.leading, .trailing])
     }
 }
 ```
 
 ## Contributing
 
-Contributions and suggetions are welcome! 
+Contributions and suggestions are welcome! 
 To contribute to this library, please fork this repository or submit a pull request with your changes.
 
 

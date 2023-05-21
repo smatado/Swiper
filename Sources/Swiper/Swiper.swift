@@ -13,25 +13,22 @@ public enum SwipeAction {
  Example usage:
  ```
  Swiper(data: $cards) { item, action in
-     CardView(cardModel: item, swipeAction: action)
+     CardView(cardModel: item, userAction: action)
  } onSwipe: { item, action in
-     switch action {
-     case .left:
-         dislike()
-     case .right:
-         like()
-     default: break
-     }
+     didSwipe(item: item, action: action)
  }
+ .rotationRatio(50.0)
+ .swipeThreshold(50.0)
+ .animationDuration(0.15)
  ```
  
  - Parameters:
     - data: A binding to an array of data items that will be presented as cards.
     - content: A closure that returns a custom view builder `View` for a given data item and swipe action.
     - onSwipe: A closure that is called when the user swipes a card, with the swiped data item and the swipe action.
-    - rotationRatio: The ratio of rotation applied to the top card during swipe, default is 0.05.
+    - rotationRatio: Rotation ratio in degrees per points of the horizontal translation, default is 0.05.
     - swipeThreshold: The minimum horizontal translation threshold required to register a swipe action, default is 50.0.
-    - animationDuration: The duration of the swipe animation, default is 0.15 seconds.
+    - animationDuration: The duration of the swipe animation when user releases the card, default is 0.15 seconds.
  */
 
 public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
@@ -39,22 +36,39 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
     @Binding public var data: [Data]
     public var content: (Data, SwipeAction) -> Content
     public var onSwipe: (Data, SwipeAction) -> Void
-    public var rotationRatio = 0.05
-    public var swipeThreshold = 50.0
-    public var animationDuration = 0.15
+    
+    private let rotationRatio: Double
+    private let swipeThreshold: Double
+    private let animationDuration: Double
 
     @State private var cardIndex: Int = 0
     @State private var swipeAction: SwipeAction = .none
     @State private var topCardOffset: CGSize = .zero
     @State private var isAnimating = false
     
-    public init(data: Binding<[Data]>, content: @escaping (Data, SwipeAction) -> Content, onSwipe: @escaping (Data, SwipeAction) -> Void, rotationRatio: Double = 0.05, swipeThreshold: Double = 50.0, animationDuration: Double = 0.15) {
+    public init(data: Binding<[Data]>, @ViewBuilder content: @escaping (Data, SwipeAction) -> Content, onSwipe: @escaping (Data, SwipeAction) -> Void,
+                rotationRatio: Double = 0.05, swipeThreshold: Double = 50.0, animationDuration: Double = 0.15) {
         self._data = data
         self.content = content
         self.onSwipe = onSwipe
         self.rotationRatio = rotationRatio
         self.swipeThreshold = swipeThreshold
         self.animationDuration = animationDuration
+    }
+    
+    public func rotationRatio(_ rotationRatio: Double) -> Self {
+        Self.init(data: _data, content: content, onSwipe: onSwipe,
+                  rotationRatio: rotationRatio, swipeThreshold: swipeThreshold, animationDuration: animationDuration)
+    }
+    
+    public func swipeThreshold(_ swipeThreshold: Double) -> Self {
+        Self.init(data: _data, content: content, onSwipe: onSwipe,
+                  rotationRatio: rotationRatio, swipeThreshold: swipeThreshold, animationDuration: animationDuration)
+    }
+    
+    public func animationDuration(_ animationDuration: Double) -> Self {
+        Self.init(data: _data, content: content, onSwipe: onSwipe,
+                  rotationRatio: rotationRatio, swipeThreshold: swipeThreshold, animationDuration: animationDuration)
     }
     
     public var body: some View {
@@ -67,20 +81,12 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
             }
         }
         .gesture(gesture())
-        .allowsHitTesting(!isAnimating) // Avoid interaction when the animation is not terminated
+        .allowsHitTesting(!isAnimating) // Avoid interaction when animation is not completed
         .onChange(of: data) { _ in
             cardIndex = 0
         }
     }
     
-    /*
-     Returns an array of visible data items to be displayed in the deck view.
-     
-     This function optimizes performance and memory usage by only returning the
-     two cards that need to be displayed, based on the current `cardIndex`.
-     
-     `guard` statment and usage of `min()` ensure that `cardInex` is in the `data` Array bounds.
-    */
     private var visibleItems: [Data] {
         guard cardIndex < data.count else { return [] }
         let lastIndex = data.count - 1
@@ -88,26 +94,23 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
         return data[cardIndex...lastVisibleIndex].reversed()
     }
     
-    // Returns the dragging gesture of the top card
     private func gesture() -> some Gesture {
         DragGesture()
             .onChanged(onDragChanged)
             .onEnded(onDragEnded)
     }
     
-    // Called when the dragging gesture is changed
     private func onDragChanged(value: DragGesture.Value) {
         topCardOffset = value.translation
         swipeAction = swipeAction(translation: value.translation)
     }
     
-    // Called when the dragging gesture is ended
     private func onDragEnded(value: DragGesture.Value) {
         onSwipe(data[cardIndex], swipeAction)
 
         isAnimating = true
 
-        withAnimation(.easeIn(duration: animationDuration)) {
+        withAnimation(.spring(dampingFraction: 0.5, blendDuration: animationDuration)) {
             topCardOffset = cardFinalPosition(swipeAction: swipeAction, topCardOffset: topCardOffset)
         }
         
@@ -118,7 +121,6 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
         }
     }
     
-    // Returns the swipe action based on the dragging translation */
     private func swipeAction(translation: CGSize) -> SwipeAction {
         if translation.width > swipeThreshold {
             return .right
@@ -129,7 +131,6 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
         }
     }
     
-    // Returns the final position of the card in the direction of the current swipe
     private func cardFinalPosition(swipeAction: SwipeAction, topCardOffset: CGSize) -> CGSize {
         guard swipeAction != .none else { return .zero }
         let angle = atan2(topCardOffset.height, topCardOffset.width)
@@ -138,10 +139,6 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
         return .init(width: x, height: y)
     }
     
-    /*
-     After a swipe action has been completed,
-     we increment the cardIndex to move to the next card and reset any states
-    */
     private func onAnimationCompleted() {
         guard swipeAction != .none else { return }
         cardIndex += 1
