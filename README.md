@@ -24,20 +24,20 @@ TODO
 
 ```swift
 import SwiftUI
-import CardDeck
+import Swiper
 
 struct ContentView: View {
     @State var cards: [Card] = // your card data
     
     var body: some View {
         Swiper(data: $cards) { item, action in // <--- Pass a binding to your data here
-            CardView(cardModel: item, userAction: action) // <--- Your custom View here, pass the action for customization if needed
+            CardView(cardModel: item, userAction: action) // <--- Your custom View here
         } onSwipe: { item, action in
             didSwipe(item: item, action: action) // <--- Handle Swipe action here
         }
-        .rotationRatio(50.0) // <--- Rotation ratio in degrees per points of the horizontal translation
-        .swipeThreshold(50.0) // <--- The minimum horizontal translation threshold required to register a swipe action
-        .animationDuration(0.15) // <--- The duration of the swipe animation when user releases the card
+        .rotationRatio(0.05) // <--- Rotation ratio in degrees per points
+        .swipeThreshold(50.0) // <--- The minimum horizontal translation
+        .animationDuration(0.15) // <--- Duration of the swipe animation when user releases the card
         .padding([.leading, .trailing])
     }
 }
