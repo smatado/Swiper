@@ -16,7 +16,13 @@ A SwiftUI generic swipeable card stack as in dating apps.
 
 ### Swift Package Manager
 
-TODO
+1. Go to **File** -> **Add Packages...**
+
+2. Type `git@github.com:Nifty-Code/Swiper.git` in the search bar.
+
+3. Click on **Add Package**.
+
+That's it! The Swift package will be added to your project.
 
 ## Usage
 
