@@ -2,40 +2,50 @@ import SwiftUI
 
 /// Enum representing the user action on a card in the Swiper view.
 public enum SwipeAction {
-    case none, left, right
+    case none, dislike, like
 }
 
 /**
  A view that displays a deck of swipeable cards.
+
+ Use a `Swiper` to present a collection of data items as swipeable cards, with each card being rendered using a custom `View` builder closure.
  
- Use a `Swiper` to present a collection of data items as swipeable cards, with each card being rendered using a custom `View` builder closure. When the user swipes a card, the `onSwipe` closure is called with the swiped data item and the direction of the swipe. The deck also supports configuring swipe gesture thresholds, animation durations, and rotation ratios.
+ `buttons` closure could be used to add bottom action buttons. The `Context` could be used to trigger like/dislike actions.
+ 
+ When the user swipes a card, the `onAction` closure is called with the swiped data item and the direction of the swipe.
+ 
+ The component also supports configuring swipe gesture thresholds, animation durations, and rotation ratios.
  
  Example usage:
  ```
- Swiper(data: $cards) { item, action in
-     CardView(cardModel: item, userAction: action)
- } onSwipe: { item, action in
-     didSwipe(item: item, action: action)
+ Swiper(data: $cards) { item, action, context in
+    CardView(cardModel: item, userAction: action)
+ } buttons: { context in
+    HStack {
+        Button("Dislike") { context.dislike() }
+        Button("Like") { context.like() }
+    }
+ } onAction: { item, action in
+    didSwipe(item: item, action: action)
  }
- .rotationRatio(50.0)
+ .rotationRatio(0.05)
  .swipeThreshold(50.0)
  .animationDuration(0.15)
  ```
- 
- - Parameters:
-    - data: A binding to an array of data items that will be presented as cards.
-    - content: A closure that returns a custom view builder `View` for a given data item and swipe action.
-    - onSwipe: A closure that is called when the user swipes a card, with the swiped data item and the swipe action.
-    - rotationRatio: Rotation ratio in degrees per points of the horizontal translation, default is 0.05.
-    - swipeThreshold: The minimum horizontal translation threshold required to register a swipe action, default is 50.0.
-    - animationDuration: The duration of the swipe animation when user releases the card, default is 0.15 seconds.
  */
 
-public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
+public struct Swiper<Data: Identifiable & Equatable, Content: View, Buttons: View>: View {
+    
+    /// Context could be passed to `View` builder closures to call like/dislike action.
+    public struct Context {
+        public var like: () -> Void
+        public var dislike: () -> Void
+    }
     
     @Binding public var data: [Data]
-    public var content: (Data, SwipeAction) -> Content
-    public var onSwipe: (Data, SwipeAction) -> Void
+    public var content: (Data, SwipeAction, Context) -> Content
+    public var buttons: (Context) -> Buttons
+    public var onAction: (Data, SwipeAction) -> Void
     
     private let rotationRatio: Double
     private let swipeThreshold: Double
@@ -46,45 +56,55 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
     @State private var topCardOffset: CGSize = .zero
     @State private var isAnimating = false
     
-    public init(data: Binding<[Data]>, @ViewBuilder content: @escaping (Data, SwipeAction) -> Content, onSwipe: @escaping (Data, SwipeAction) -> Void,
-                rotationRatio: Double = 0.05, swipeThreshold: Double = 50.0, animationDuration: Double = 0.15) {
+    public init(data: Binding<[Data]>,
+                @ViewBuilder content: @escaping (Data, SwipeAction, Context) -> Content,
+                @ViewBuilder buttons: @escaping (Context) -> Buttons,
+                onAction: @escaping (Data, SwipeAction) -> Void,
+                rotationRatio: Double = 0.05,
+                swipeThreshold: Double = 50.0,
+                animationDuration: Double = 0.15) {
         self._data = data
         self.content = content
-        self.onSwipe = onSwipe
+        self.buttons = buttons
+        self.onAction = onAction
         self.rotationRatio = rotationRatio
         self.swipeThreshold = swipeThreshold
         self.animationDuration = animationDuration
     }
     
+    public var body: some View {
+        let context = Context(like: like, dislike: dislike)
+        VStack {
+            ZStack {
+                ForEach(visibleItems, id: \.id) { item in
+                    let isTopCard = item.id == visibleItems.last?.id
+                    content(item, isTopCard ? swipeAction : .none, context)
+                        .offset(isTopCard ? topCardOffset : .zero)
+                        .rotationEffect(isTopCard ? .degrees(topCardOffset.width * rotationRatio) : .zero)
+                }
+            }
+            .gesture(gesture())
+            .allowsHitTesting(!isAnimating) // Avoid interaction when animation is not completed
+            .onChange(of: data) { _ in
+                cardIndex = 0
+            }
+            buttons(context)
+        }
+    }
+    
     public func rotationRatio(_ rotationRatio: Double) -> Self {
-        Self.init(data: _data, content: content, onSwipe: onSwipe,
+        Self.init(data: _data, content: content, buttons: buttons, onAction: onAction,
                   rotationRatio: rotationRatio, swipeThreshold: swipeThreshold, animationDuration: animationDuration)
     }
     
     public func swipeThreshold(_ swipeThreshold: Double) -> Self {
-        Self.init(data: _data, content: content, onSwipe: onSwipe,
+        Self.init(data: _data, content: content, buttons: buttons, onAction: onAction,
                   rotationRatio: rotationRatio, swipeThreshold: swipeThreshold, animationDuration: animationDuration)
     }
     
     public func animationDuration(_ animationDuration: Double) -> Self {
-        Self.init(data: _data, content: content, onSwipe: onSwipe,
+        Self.init(data: _data, content: content, buttons: buttons, onAction: onAction,
                   rotationRatio: rotationRatio, swipeThreshold: swipeThreshold, animationDuration: animationDuration)
-    }
-    
-    public var body: some View {
-        ZStack {
-            ForEach(visibleItems, id: \.id) { item in
-                let isTopCard = item.id == visibleItems.last?.id
-                content(item, isTopCard ? swipeAction : .none)
-                    .offset(isTopCard ? topCardOffset : .zero)
-                    .rotationEffect(isTopCard ? .degrees(topCardOffset.width * rotationRatio) : .zero)
-            }
-        }
-        .gesture(gesture())
-        .allowsHitTesting(!isAnimating) // Avoid interaction when animation is not completed
-        .onChange(of: data) { _ in
-            cardIndex = 0
-        }
     }
     
     private var visibleItems: [Data] {
@@ -106,9 +126,47 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
     }
     
     private func onDragEnded(value: DragGesture.Value) {
-        onSwipe(data[cardIndex], swipeAction)
-
         isAnimating = true
+        endDragging()
+    }
+    
+    private func like() {
+        animateAction(action: .like)
+    }
+
+    private func dislike() {
+        animateAction(action: .dislike)
+    }
+
+    private func animateAction(action: SwipeAction) {
+        guard !isAnimating else { return }
+        
+        isAnimating = true
+        swipeAction = action
+                
+        withAnimation(.easeIn(duration: animationDuration)) {
+            topCardOffset = offset(for: action)
+        }
+        
+        // Called after the animation has been completed
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            endDragging()
+        }
+    }
+    
+    private func offset(for action: SwipeAction) -> CGSize {
+        switch action {
+        case .none:
+            return .zero
+        case .dislike:
+            return .init(width: -swipeThreshold, height: 0.0)
+        case .like:
+            return .init(width: swipeThreshold, height: 0.0)
+        }
+    }
+    
+    private func endDragging() {
+        onAction(data[cardIndex], swipeAction)
 
         withAnimation(.spring(dampingFraction: 0.5, blendDuration: animationDuration)) {
             topCardOffset = cardFinalPosition(swipeAction: swipeAction, topCardOffset: topCardOffset)
@@ -123,9 +181,9 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View>: View {
     
     private func swipeAction(translation: CGSize) -> SwipeAction {
         if translation.width > swipeThreshold {
-            return .right
+            return .like
         } else if translation.width < -swipeThreshold {
-            return .left
+            return .dislike
         } else {
             return .none
         }

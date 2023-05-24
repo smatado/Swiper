@@ -7,16 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6331AE042A1D116D007FCB3A /* Swiper in Frameworks */ = {isa = PBXBuildFile; productRef = 6331AE032A1D116D007FCB3A /* Swiper */; };
 		63A8DCC32A1C4F9200801BF3 /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCC22A1C4F9200801BF3 /* ExampleApp.swift */; };
 		63A8DCC72A1C4F9200801BF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63A8DCC62A1C4F9200801BF3 /* Assets.xcassets */; };
 		63A8DCCA2A1C4F9200801BF3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63A8DCC92A1C4F9200801BF3 /* Preview Assets.xcassets */; };
 		63A8DCD22A1C4FB100801BF3 /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCD02A1C4FB100801BF3 /* CardModel.swift */; };
 		63A8DCD32A1C4FB100801BF3 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCD12A1C4FB100801BF3 /* CardView.swift */; };
 		63A8DCD52A1C4FF400801BF3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCD42A1C4FF400801BF3 /* ContentView.swift */; };
-		63A8DCD82A1C501E00801BF3 /* Swiper in Frameworks */ = {isa = PBXBuildFile; productRef = 63A8DCD72A1C501E00801BF3 /* Swiper */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6331AE012A1D1159007FCB3A /* Swiper */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Swiper; path = ..; sourceTree = "<group>"; };
 		63A8DCBF2A1C4F9200801BF3 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63A8DCC22A1C4F9200801BF3 /* ExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
 		63A8DCC62A1C4F9200801BF3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -31,18 +32,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63A8DCD82A1C501E00801BF3 /* Swiper in Frameworks */,
+				6331AE042A1D116D007FCB3A /* Swiper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6331AE002A1D1159007FCB3A /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				6331AE012A1D1159007FCB3A /* Swiper */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		6331AE022A1D116D007FCB3A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		63A8DCB62A1C4F9200801BF3 = {
 			isa = PBXGroup;
 			children = (
+				6331AE002A1D1159007FCB3A /* Packages */,
 				63A8DCC12A1C4F9200801BF3 /* Example */,
 				63A8DCC02A1C4F9200801BF3 /* Products */,
+				6331AE022A1D116D007FCB3A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -92,7 +110,7 @@
 			);
 			name = Example;
 			packageProductDependencies = (
-				63A8DCD72A1C501E00801BF3 /* Swiper */,
+				6331AE032A1D116D007FCB3A /* Swiper */,
 			);
 			productName = Example;
 			productReference = 63A8DCBF2A1C4F9200801BF3 /* Example.app */;
@@ -123,7 +141,6 @@
 			);
 			mainGroup = 63A8DCB62A1C4F9200801BF3;
 			packageReferences = (
-				63A8DCD62A1C501E00801BF3 /* XCRemoteSwiftPackageReference "Swiper" */,
 			);
 			productRefGroup = 63A8DCC02A1C4F9200801BF3 /* Products */;
 			projectDirPath = "";
@@ -356,21 +373,9 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		63A8DCD62A1C501E00801BF3 /* XCRemoteSwiftPackageReference "Swiper" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "git@github.com:Nifty-Code/Swiper.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		63A8DCD72A1C501E00801BF3 /* Swiper */ = {
+		6331AE032A1D116D007FCB3A /* Swiper */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 63A8DCD62A1C501E00801BF3 /* XCRemoteSwiftPackageReference "Swiper" */;
 			productName = Swiper;
 		};
 /* End XCSwiftPackageProductDependency section */

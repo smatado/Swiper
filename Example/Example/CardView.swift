@@ -79,9 +79,9 @@ fileprivate extension SwipeAction {
         switch self {
         case .none:
             return nil
-        case .left:
+        case .dislike:
             return "hand.thumbsdown.circle"
-        case .right:
+        case .like:
             return "hand.thumbsup.circle"
         }
     }
@@ -90,9 +90,9 @@ fileprivate extension SwipeAction {
         switch self {
         case .none:
             return .clear
-        case .left:
+        case .dislike:
             return .red
-        case .right:
+        case .like:
             return .green
         }
     }
