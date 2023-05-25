@@ -12,11 +12,12 @@ struct CardView: View {
     
     let cardModel: CardModel
     let userAction: SwipeAction
+    let context: SwiperContext
 
     var body: some View {
         GeometryReader { reader in
             ZStack {
-                let url = URL(string: "https://picsum.photos/\(Int(reader.size.width))/\(Int(reader.size.height))")
+                let url = URL(string: "https://picsum.photos/id/\(cardModel.id)/\(Int(reader.size.width))/\(Int(reader.size.height))")
                 AsyncImage(url: url) { image in
                     image
                         .resizable()
@@ -46,7 +47,7 @@ struct CardView: View {
     }
     
     @ViewBuilder private func numberLabel() -> some View {
-        Text("\(cardModel.id)").fontWeight(.bold)
+        Text("#\(cardModel.id)").fontWeight(.bold)
             .padding()
             .background(
                 Rectangle()
@@ -69,8 +70,15 @@ struct CardView: View {
 }
 
 struct CardView_Previews: PreviewProvider {
+    
+    static var items: [CardModel] = (10...1000).map { CardModel(id: $0) }
+
     static var previews: some View {
-        CardView(cardModel: CardModel(id: 0), userAction: .none)
+        Swiper(data: items) { item, action, context in
+            CardView(cardModel: item, userAction: action, context: context)
+        } onAction: { _,_  in
+          print("onAction")
+        }
     }
 }
 

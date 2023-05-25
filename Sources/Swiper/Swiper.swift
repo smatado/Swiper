@@ -5,16 +5,29 @@ public enum SwipeAction {
     case none, dislike, like
 }
 
+/// Context could be passed to `View` builder closures to call like, dislike or rollback actions from custom defined buttons.
+public struct SwiperContext {
+    
+    /// Performs a rollback animation to the previous card according to the `SwipeAction` passed in parameter.
+    public let rollback: (SwipeAction) -> Void
+    
+    /// Performs a like animation and show the next card. `onSwipeAction` callback will be called then.
+    public let like: () -> Void
+    
+    /// Performs a dislike animation and show the next card. `onSwipeAction` callback will be called then.
+    public let dislike: () -> Void
+}
+
 /**
  A view that displays a deck of swipeable cards.
 
  Use a `Swiper` to present a collection of data items as swipeable cards, with each card being rendered using a custom `View` builder closure.
  
- `buttons` closure could be used to add bottom action buttons. The `Context` could be used to trigger like/dislike actions.
+ `buttons` closure could be used to add bottom action buttons. The `Context` could be used to trigger actions (like, dislike or rollback).
  
  When the user swipes a card, the `onAction` closure is called with the swiped data item and the direction of the swipe.
  
- The component also supports configuring swipe gesture thresholds, animation durations, and rotation ratios.
+ The component also supports configuring swipe gesture threshold, animation durations, and rotation ratios.
  
  Example usage:
  ```
@@ -22,6 +35,7 @@ public enum SwipeAction {
     CardView(cardModel: item, userAction: action)
  } buttons: { context in
     HStack {
+        Button("Rollback") { context.rollback(previousAction) }
         Button("Dislike") { context.dislike() }
         Button("Like") { context.like() }
     }
@@ -36,15 +50,9 @@ public enum SwipeAction {
 
 public struct Swiper<Data: Identifiable & Equatable, Content: View, Buttons: View>: View {
     
-    /// Context could be passed to `View` builder closures to call like/dislike action.
-    public struct Context {
-        public var like: () -> Void
-        public var dislike: () -> Void
-    }
-    
     @Binding public var data: [Data]
-    public var content: (Data, SwipeAction, Context) -> Content
-    public var buttons: (Context) -> Buttons
+    public var content: (Data, SwipeAction, SwiperContext) -> Content
+    public var buttons: (SwiperContext) -> Buttons
     public var onAction: (Data, SwipeAction) -> Void
     
     private let rotationRatio: Double
@@ -57,8 +65,8 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View, Buttons: Vie
     @State private var isAnimating = false
     
     public init(data: Binding<[Data]>,
-                @ViewBuilder content: @escaping (Data, SwipeAction, Context) -> Content,
-                @ViewBuilder buttons: @escaping (Context) -> Buttons,
+                @ViewBuilder content: @escaping (Data, SwipeAction, SwiperContext) -> Content,
+                @ViewBuilder buttons: @escaping (SwiperContext) -> Buttons = { _ in EmptyView() },
                 onAction: @escaping (Data, SwipeAction) -> Void,
                 rotationRatio: Double = 0.05,
                 swipeThreshold: Double = 50.0,
@@ -72,8 +80,19 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View, Buttons: Vie
         self.animationDuration = animationDuration
     }
     
+    public init(data: [Data],
+                @ViewBuilder content: @escaping (Data, SwipeAction, SwiperContext) -> Content,
+                @ViewBuilder buttons: @escaping (SwiperContext) -> Buttons = { _ in EmptyView() },
+                onAction: @escaping (Data, SwipeAction) -> Void,
+                rotationRatio: Double = 0.05,
+                swipeThreshold: Double = 50.0,
+                animationDuration: Double = 0.15) {
+        self.init(data: .constant(data), content: content, buttons: buttons, onAction: onAction,
+                  rotationRatio: rotationRatio, swipeThreshold: swipeThreshold, animationDuration: animationDuration)
+    }
+    
     public var body: some View {
-        let context = Context(like: like, dislike: dislike)
+        let context = SwiperContext(rollback: rollback, like: like, dislike: dislike)
         VStack {
             ZStack {
                 ForEach(visibleItems, id: \.id) { item in
@@ -122,7 +141,7 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View, Buttons: Vie
     
     private func onDragChanged(value: DragGesture.Value) {
         topCardOffset = value.translation
-        swipeAction = swipeAction(translation: value.translation)
+        swipeAction = swipeAction(from: value.translation)
     }
     
     private func onDragEnded(value: DragGesture.Value) {
@@ -138,6 +157,22 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View, Buttons: Vie
         animateAction(action: .dislike)
     }
 
+    private func rollback(action: SwipeAction) {
+        guard cardIndex > 0 else { return }
+        
+        topCardOffset = cardFinalPosition(swipeAction: action, topCardOffset: offset(for: action))
+        cardIndex -= 1
+        
+        withAnimation(.easeOut(duration: animationDuration)) {
+            topCardOffset = .zero
+        }
+        
+        // Called after the animation has been completed
+        DispatchQueue.main.asyncAfter(deadline: .now() + animationDuration) {
+            swipeAction = .none
+        }
+    }
+    
     private func animateAction(action: SwipeAction) {
         guard !isAnimating else { return }
         
@@ -179,7 +214,7 @@ public struct Swiper<Data: Identifiable & Equatable, Content: View, Buttons: Vie
         }
     }
     
-    private func swipeAction(translation: CGSize) -> SwipeAction {
+    private func swipeAction(from translation: CGSize) -> SwipeAction {
         if translation.width > swipeThreshold {
             return .like
         } else if translation.width < -swipeThreshold {

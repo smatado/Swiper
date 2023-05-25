@@ -10,14 +10,25 @@ import Swiper
 
 struct ContentView: View {
     
-    @State var items: [CardModel] = (0...1000).map { CardModel(id: $0) }
-    
+    @State var items: [CardModel] = (10...1000).map { CardModel(id: $0) }
+    @State var lastAction: SwipeAction = .none
+
     var body: some View {
-        Swiper(data: $items) { item, action, _ in
-            CardView(cardModel: item, userAction: action)
-                .shadow(radius: 4.0, x: 4.0, y: 4.0)
+        Swiper(data: $items) { item, action, context in
+            CardView(cardModel: item, userAction: action, context: context)
         } buttons: { context in
             HStack {
+                Spacer()
+                Button {
+                    context.rollback(lastAction)
+                    self.lastAction = .none
+                } label: {
+                    Image(systemName: "arrow.uturn.backward.circle")
+                        .resizable()
+                        .tint(.blue)
+                        .frame(width: 64.0, height: 64.0)
+                }
+                .disabled(lastAction == .none)
                 Spacer()
                 Button {
                     context.dislike()
@@ -40,6 +51,7 @@ struct ContentView: View {
             }
         } onAction: { item, action in
             print("Swiped \(action) on item id \(item.id)")
+            lastAction = action
         }
         .padding()
     }

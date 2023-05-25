@@ -9,8 +9,10 @@ import Foundation
 
 struct CardModel: Identifiable, Equatable {
     var id: Int
-    
+    var imageName: String
+
     init(id: Int) {
         self.id = id
+        self.imageName = "\(id)"
     }
 }
