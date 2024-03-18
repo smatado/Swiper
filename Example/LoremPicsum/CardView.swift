@@ -11,12 +11,15 @@ import Swiper
 struct CardView: View {
     
     let cardModel: CardModel
-    let userAction: SwipeAction
-    let context: SwiperContext
+    let swipeDirection: Edge?
+    
+    @Binding var showButtonBarInCard: Bool
+    @Binding var lastSwipedDirection: Edge?
+    @Binding var swipeStackProxy: SwipeStackProxy
 
     var body: some View {
         GeometryReader { reader in
-            ZStack {
+            ZStack(alignment: .bottom) {
                 let url = URL(string: "https://picsum.photos/id/\(cardModel.id)/\(Int(reader.size.width))/\(Int(reader.size.height))")
                 AsyncImage(url: url) { image in
                     image
@@ -27,11 +30,19 @@ struct CardView: View {
                 } placeholder: {
                     imagePlaceholder()
                 }
+                
                 numberLabel()
                     .frame(width: reader.size.width,
                            height: reader.size.height,
                            alignment: .topLeading)
+                
                 actionOverlay()
+                
+                if showButtonBarInCard {
+                    ButtonBar(lastSwipedDirection: $lastSwipedDirection, swipeStackProxy: $swipeStackProxy)
+                        .padding()
+                        .zIndex(0.0)
+                }
             }
         }
         .cornerRadius(16.0)
@@ -59,49 +70,51 @@ struct CardView: View {
     }
     
     @ViewBuilder private func actionOverlay() -> some View {
-        Rectangle()
-            .fill(userAction.overlayColor.opacity(0.25))
-        if let overlayImageName = userAction.overlayImageName {
-            Image(systemName: overlayImageName)
-                .font(.system(size: 200.0))
-                .foregroundColor(userAction.overlayColor)
+        ZStack {
+            Rectangle()
+                .fill(swipeDirection.overlayColor.opacity(0.25))
+            Image(systemName: swipeDirection.overlayImageName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(swipeDirection.overlayColor)
+                .frame(maxWidth: .infinity,
+                       maxHeight: .infinity,
+                       alignment: .top)
+                .padding()
+
         }
+        .opacity(swipeDirection.overlayOpacity)
+        .animation(.default, value: swipeDirection.overlayOpacity)
     }
 }
 
-struct CardView_Previews: PreviewProvider {
-    
-    static var items: [CardModel] = (10...1000).map { CardModel(id: $0) }
-
-    static var previews: some View {
-        Swiper(data: items) { item, action, context in
-            CardView(cardModel: item, userAction: action, context: context)
-        } onAction: { _,_  in
-          print("onAction")
-        }
-    }
-}
-
-fileprivate extension SwipeAction {
-    var overlayImageName: String? {
+fileprivate extension Optional where Wrapped == Edge {
+    var overlayImageName: String {
         switch self {
-        case .none:
-            return nil
-        case .dislike:
-            return "hand.thumbsdown.circle"
-        case .like:
+        case .trailing:
             return "hand.thumbsup.circle"
+        case .leading, .none, .top, .bottom:
+            return "hand.thumbsdown.circle"
         }
     }
     
     var overlayColor: Color {
         switch self {
-        case .none:
-            return .clear
-        case .dislike:
+        case .leading:
             return .red
-        case .like:
+        case .trailing:
             return .green
+        case .none, .top, .bottom:
+            return .clear
+        }
+    }
+    
+    var overlayOpacity: CGFloat {
+        switch self {
+        case .none:
+            return 0.0
+        default:
+            return 1.0
         }
     }
 }

@@ -7,24 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6331AE042A1D116D007FCB3A /* Swiper in Frameworks */ = {isa = PBXBuildFile; productRef = 6331AE032A1D116D007FCB3A /* Swiper */; };
-		63A8DCC32A1C4F9200801BF3 /* ExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCC22A1C4F9200801BF3 /* ExampleApp.swift */; };
+		631FAE172BFC281000D64A76 /* Swiper in Frameworks */ = {isa = PBXBuildFile; productRef = 631FAE162BFC281000D64A76 /* Swiper */; };
+		63A8DCC32A1C4F9200801BF3 /* LoremPicsum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCC22A1C4F9200801BF3 /* LoremPicsum.swift */; };
 		63A8DCC72A1C4F9200801BF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63A8DCC62A1C4F9200801BF3 /* Assets.xcassets */; };
 		63A8DCCA2A1C4F9200801BF3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63A8DCC92A1C4F9200801BF3 /* Preview Assets.xcassets */; };
 		63A8DCD22A1C4FB100801BF3 /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCD02A1C4FB100801BF3 /* CardModel.swift */; };
 		63A8DCD32A1C4FB100801BF3 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCD12A1C4FB100801BF3 /* CardView.swift */; };
 		63A8DCD52A1C4FF400801BF3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A8DCD42A1C4FF400801BF3 /* ContentView.swift */; };
+		63EF2BB12BFB9D55009AF5B6 /* ButtonBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EF2BB02BFB9D55009AF5B6 /* ButtonBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		6331AE012A1D1159007FCB3A /* Swiper */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Swiper; path = ..; sourceTree = "<group>"; };
-		63A8DCBF2A1C4F9200801BF3 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		63A8DCC22A1C4F9200801BF3 /* ExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleApp.swift; sourceTree = "<group>"; };
+		63A8DCBF2A1C4F9200801BF3 /* LoremPicsum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoremPicsum.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		63A8DCC22A1C4F9200801BF3 /* LoremPicsum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoremPicsum.swift; sourceTree = "<group>"; };
 		63A8DCC62A1C4F9200801BF3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		63A8DCC92A1C4F9200801BF3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		63A8DCD02A1C4FB100801BF3 /* CardModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 		63A8DCD12A1C4FB100801BF3 /* CardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		63A8DCD42A1C4FF400801BF3 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		63EF2BB02BFB9D55009AF5B6 /* ButtonBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,7 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6331AE042A1D116D007FCB3A /* Swiper in Frameworks */,
+				631FAE172BFC281000D64A76 /* Swiper in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,7 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				6331AE002A1D1159007FCB3A /* Packages */,
-				63A8DCC12A1C4F9200801BF3 /* Example */,
+				63A8DCC12A1C4F9200801BF3 /* LoremPicsum */,
 				63A8DCC02A1C4F9200801BF3 /* Products */,
 				6331AE022A1D116D007FCB3A /* Frameworks */,
 			);
@@ -67,22 +69,23 @@
 		63A8DCC02A1C4F9200801BF3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				63A8DCBF2A1C4F9200801BF3 /* Example.app */,
+				63A8DCBF2A1C4F9200801BF3 /* LoremPicsum.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		63A8DCC12A1C4F9200801BF3 /* Example */ = {
+		63A8DCC12A1C4F9200801BF3 /* LoremPicsum */ = {
 			isa = PBXGroup;
 			children = (
-				63A8DCC22A1C4F9200801BF3 /* ExampleApp.swift */,
+				63A8DCC22A1C4F9200801BF3 /* LoremPicsum.swift */,
 				63A8DCD42A1C4FF400801BF3 /* ContentView.swift */,
 				63A8DCD12A1C4FB100801BF3 /* CardView.swift */,
 				63A8DCD02A1C4FB100801BF3 /* CardModel.swift */,
+				63EF2BB02BFB9D55009AF5B6 /* ButtonBar.swift */,
 				63A8DCC62A1C4F9200801BF3 /* Assets.xcassets */,
 				63A8DCC82A1C4F9200801BF3 /* Preview Content */,
 			);
-			path = Example;
+			path = LoremPicsum;
 			sourceTree = "<group>";
 		};
 		63A8DCC82A1C4F9200801BF3 /* Preview Content */ = {
@@ -96,9 +99,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		63A8DCBE2A1C4F9200801BF3 /* Example */ = {
+		63A8DCBE2A1C4F9200801BF3 /* LoremPicsum */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 63A8DCCD2A1C4F9200801BF3 /* Build configuration list for PBXNativeTarget "Example" */;
+			buildConfigurationList = 63A8DCCD2A1C4F9200801BF3 /* Build configuration list for PBXNativeTarget "LoremPicsum" */;
 			buildPhases = (
 				63A8DCBB2A1C4F9200801BF3 /* Sources */,
 				63A8DCBC2A1C4F9200801BF3 /* Frameworks */,
@@ -108,12 +111,12 @@
 			);
 			dependencies = (
 			);
-			name = Example;
+			name = LoremPicsum;
 			packageProductDependencies = (
-				6331AE032A1D116D007FCB3A /* Swiper */,
+				631FAE162BFC281000D64A76 /* Swiper */,
 			);
 			productName = Example;
-			productReference = 63A8DCBF2A1C4F9200801BF3 /* Example.app */;
+			productReference = 63A8DCBF2A1C4F9200801BF3 /* LoremPicsum.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -131,7 +134,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 63A8DCBA2A1C4F9200801BF3 /* Build configuration list for PBXProject "Example" */;
+			buildConfigurationList = 63A8DCBA2A1C4F9200801BF3 /* Build configuration list for PBXProject "LoremPicsum" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -146,7 +149,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				63A8DCBE2A1C4F9200801BF3 /* Example */,
+				63A8DCBE2A1C4F9200801BF3 /* LoremPicsum */,
 			);
 		};
 /* End PBXProject section */
@@ -168,7 +171,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63A8DCC32A1C4F9200801BF3 /* ExampleApp.swift in Sources */,
+				63EF2BB12BFB9D55009AF5B6 /* ButtonBar.swift in Sources */,
+				63A8DCC32A1C4F9200801BF3 /* LoremPicsum.swift in Sources */,
 				63A8DCD32A1C4FB100801BF3 /* CardView.swift in Sources */,
 				63A8DCD52A1C4FF400801BF3 /* ContentView.swift in Sources */,
 				63A8DCD22A1C4FB100801BF3 /* CardModel.swift in Sources */,
@@ -299,7 +303,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Example/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"LoremPicsum/Preview Content\"";
 				DEVELOPMENT_TEAM = PF8A85N9YG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -308,6 +312,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -328,7 +333,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Example/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"LoremPicsum/Preview Content\"";
 				DEVELOPMENT_TEAM = PF8A85N9YG;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -337,6 +342,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -353,7 +359,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		63A8DCBA2A1C4F9200801BF3 /* Build configuration list for PBXProject "Example" */ = {
+		63A8DCBA2A1C4F9200801BF3 /* Build configuration list for PBXProject "LoremPicsum" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				63A8DCCB2A1C4F9200801BF3 /* Debug */,
@@ -362,7 +368,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		63A8DCCD2A1C4F9200801BF3 /* Build configuration list for PBXNativeTarget "Example" */ = {
+		63A8DCCD2A1C4F9200801BF3 /* Build configuration list for PBXNativeTarget "LoremPicsum" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				63A8DCCE2A1C4F9200801BF3 /* Debug */,
@@ -374,7 +380,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6331AE032A1D116D007FCB3A /* Swiper */ = {
+		631FAE162BFC281000D64A76 /* Swiper */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Swiper;
 		};

@@ -8,6 +8,7 @@
 import Foundation
 
 struct CardModel: Identifiable, Equatable {
+    
     var id: Int
     var imageName: String
 

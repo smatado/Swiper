@@ -8,11 +8,11 @@ A SwiftUI generic swipeable card stack as in dating apps.
 
 ## Features
 
-- Generic: The container can be used with any View and Data
-- Lazy: Only renders the visible cards for better performance and less memory usage
-- Customization: Allows card customization with user action (ex: like/dislike overlay) 
-- Rollback support: Allows the user to rollback to the previous card.
-- Action buttons: You can provide custom buttons to call like/dislike/rollback actions. These buttons could be integrated to your cards or at the bottom of the cards.
+- **Generic**: The container can be used with any View and Data
+- **Lazy**: Only renders the visible cards for better performance and less memory usage
+- **Customization**: Allows card customization with user action (ex: like/dislike overlay) 
+- **Rollback support**: Allows the user to rollback to the previous card.
+- **Action buttons**: You can provide custom buttons to call like/dislike/rollback actions. These buttons could be integrated to your cards or at the bottom of the cards.
 
 ## Installation
 
@@ -20,7 +20,7 @@ A SwiftUI generic swipeable card stack as in dating apps.
 
 1. Go to **File** -> **Add Packages...**
 
-2. Type `git@github.com:Nifty-Code/Swiper.git` in the search bar.
+2. Type `git@github.com:smatado/Swiper.git` in the search bar.
 
 3. Click on **Add Package**.
 
@@ -31,22 +31,17 @@ That's it! The Swift package will be added to your project.
 ### Basic Usage
 
 ```swift
-import SwiftUI
-import Swiper
-
 struct ContentView: View {
-    @State var cards: [Card] = // your card data
     
+    @State var items: [Item] = ...
+
     var body: some View {
-        Swiper(data: $cards) { item, action, _ in
-            CardView(cardModel: item, userAction: action) // <--- Your custom View here
-        } onAction: { item, action in
-            didSwipe(item: item, action: action) // <--- Handle Swipe action here
+        SwipeStack(data: $items) { item, swipeDirection in
+            // Provide your custom card here. You can pass the current swipe direction for overlay customization
+            YourCard()
+        } onSwipe: { swipeDirection in
+            // Handle swipe here, swipe direction could be .leading, or .trailing
         }
-        .rotationRatio(0.05) // <--- Rotation ratio in degrees per points
-        .swipeThreshold(50.0) // <--- The minimum horizontal translation
-        .animationDuration(0.15) // <--- Duration of the swipe animation when user releases the card
-        .padding()
     }
 }
 ```
@@ -54,25 +49,63 @@ struct ContentView: View {
 ### Custom action buttons
 
 ```swift
-import SwiftUI
-import Swiper
-
 struct ContentView: View {
-    @State var cards: [Card] = // your card data
     
+    @State var items: [Item] = ...
+    
+    // Create a SwipeStackProxy to control swipe actions programmatically.
+    @State private var swipeStackProxy = SwipeStackProxy() 
+
     var body: some View {
-        Swiper(data: $cards) { item, action, context in
-            CardView(cardModel: item, userAction: action, context: context) // <--- Context could be passed here if action buttons are integrated to the card
-        } buttons: { context in
-            HStack {
-                RollbackButton { context.rollback(previousAction) }  // <--- Call the rollback action here. You must manage the previous actions
-                DislikeButton { context.dislike() }  // <--- Call the dislike action here
-                LikeButton { context.like() }  // <--- Call the like action here
+        VStack {
+            SwipeStack(data: $items, proxy: $swipeStackProxy) { item, swipeDirection in
+                // Provide your custom card here. You can pass the current swipe direction for overlay customization
+                YourCard()
+            } onSwipe: { swipeDirection in
+                // Handle swipe here, swipe direction could be .leading, or .trailing
+            } onRollback: { rollbackDirection in
+                // Handle rollback here, rollback direction could be .leading, or .trailing
             }
-        } onAction: { item, action in
-            didSwipe(item: item, action: action)
+            .zIndex(1) // Make sure the card will be above the buttons
+            
+            // Create your own buttons to trigger swipe left, swipe right and rollback here.
+            HStack {
+                Button(action: {
+                    // Trigger actions from the Swipe Stack Proxy
+                    swipeStackProxy.swipe(.leading)
+                }) {
+                    Text("Like")
+                }
+                
+                /* add your swipe right and rollback button here... */
+            }
         }
-        .padding()
+    }
+}
+```
+
+### Customizing the behavior and appearance 
+
+```swift
+struct ContentView: View {
+    
+    @State var items: [CardModel] = (10...1000).map { CardModel(id: $0) }
+    @State private var swipeStackProxy = SwipeStackProxy()
+
+    var body: some View {
+        SwipeStack(data: $items,
+                   configuration: SwipeStackConfiguration(
+                    rotationRatio: 0.05, // The ratio of rotation applied to the card during a swipe.
+                    swipeThreshold: 50.0, // The distance for triggering a swipe action.
+                    maxCardScale: 1.2, // The maximum scale applied to the top card during a swipe.
+                    scaleEffectAdjustmentFactor: 0.0025, // The factor by which the scale effect is adjusted during a swipe.
+                    shadowRadiusScalingFactor: 0.1 // The factor by which the shadow radius is scaled during a swipe.
+                   )
+        ) { item, swipeDirection in
+            YourCard()
+        } onSwipe: { swipeDirection in
+
+        }
     }
 }
 ```
