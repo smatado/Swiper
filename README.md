@@ -1,7 +1,7 @@
 # Swiper 🎴
 
 ![Swift version](https://img.shields.io/badge/Swift-5.4-orange.svg)
-![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20iPadOS%2014.0-blue.svg)
+![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20iPadOS%2017.0-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 A SwiftUI generic swipeable card stack as in dating apps.
